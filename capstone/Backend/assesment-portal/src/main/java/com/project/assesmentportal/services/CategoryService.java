@@ -2,6 +2,7 @@ package com.project.assesmentportal.services;
 
 import java.util.List;
 
+import com.project.assesmentportal.dto.ApiResponse;
 import com.project.assesmentportal.dto.CategoryDto;
 import com.project.assesmentportal.dto.QuizDto;
 
@@ -13,15 +14,15 @@ public interface CategoryService {
     /**
      * Adds a new category.
      * @param categoryDto The CategoryDto representing the category to be added.
-     * @return The CategoryDto of the added category.
+     * @return The String message for the added category.
      */
-    CategoryDto addCategory(CategoryDto categoryDto);
+    ApiResponse addCategory(CategoryDto categoryDto);
 
     /**
      * Retrieves a list of all categories.
      * @return A list of CategoryDto objects representing all categories.
      */
-    List<CategoryDto> getAllCategories();
+    List<CategoryDto> getCategories();
 
     /**
      * Retrieves a category by its ID.
@@ -34,15 +35,16 @@ public interface CategoryService {
      * Updates a category.
      * @param categoryDto The updated CategoryDto.
      * @param categoryId  The ID of the category to update.
-     * @return The CategoryDto of the updated category.
+     * @return String message for the updated category.
      */
-    CategoryDto updateCategory(CategoryDto categoryDto, long categoryId);
+    ApiResponse updateCategory(CategoryDto categoryDto, long categoryId);
 
     /**
      * Deletes a category by its ID.
      * @param categoryId The ID of the category to delete.
+     * @return ApiResponse.
      */
-    void deleteCategory(long categoryId);
+    ApiResponse deleteCategory(long categoryId);
 
     /**
      * Gets list of quizzes for a category.

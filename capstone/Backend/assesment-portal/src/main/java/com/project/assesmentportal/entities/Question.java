@@ -38,26 +38,31 @@ public class Question {
     /**
      * The first option as answer.
      */
+    @Column(nullable = false)
     private String optionOne;
 
     /**
      * The second option as answer.
      */
+    @Column(nullable = false)
     private String optionTwo;
 
     /**
      * The third option as answer.
      */
+    @Column(nullable = false)
     private String optionThree;
 
     /**
      * The fourth option as answer.
      */
+    @Column(nullable = false)
     private String optionFour;
 
     /**
      * The correct answer.
      */
+    @Column(nullable = false)
     private String answer;
 
     /**
@@ -72,47 +77,40 @@ public class Question {
      * @return quiz belongs to.
      */
     public final Quiz getQuiz() {
-        if (quiz != null) {
-            return new Quiz(quiz.getQuizId(), quiz.getQuizTitle(),
-                    quiz.getQuizDescription(), quiz.getQuizTimer(),
-                    quiz.getCategory());
-        }
-        return null;
+        return new Quiz(quiz.getQuizId(), quiz.getQuizTitle(),
+                quiz.getQuizDescription(), quiz.getQuizTimer(),
+                quiz.getCategory());
     }
 
     /**
      * setter for the quiz.
-     * @param qz which the quiz belongs to.
+     * @param quizEntity which the quiz belongs to.
      */
-    public final void setQuiz(final Quiz qz) {
-        if (qz != null) {
-            this.quiz = new Quiz(qz.getQuizId(), qz.getQuizTitle(),
-                    qz.getQuizDescription(), qz.getQuizTimer(),
-                    qz.getCategory());
-        } else {
-            this.quiz = null;
-        }
+    public final void setQuiz(final Quiz quizEntity) {
+        this.quiz = new Quiz(quizEntity.getQuizId(),
+                quizEntity.getQuizTitle(), quizEntity.getQuizDescription(),
+                quizEntity.getQuizTimer(), quizEntity.getCategory());
     }
 
     /**
      * all args constructor for question.
-     * @param qId    id for question
-     * @param qTitle title for question
-     * @param optOne   option 1
-     * @param optTwo   option 2
-     * @param optThree   option 3
-     * @param optFour   option 4
-     * @param ans    correct answer
+     * @param id      id for question
+     * @param title   title for question
+     * @param option1 option 1
+     * @param option2 option 2
+     * @param option3 option 3
+     * @param option4 option 4
+     * @param ans     correct answer
      */
-    public Question(final long qId, final String qTitle, final String optOne,
-            final String optTwo, final String optThree, final String optFour,
-            final String ans) {
-        this.questionId = qId;
-        this.questionTitle = qTitle;
-        this.optionOne = optOne;
-        this.optionTwo = optTwo;
-        this.optionThree = optThree;
-        this.optionFour = optFour;
+    public Question(final long id, final String title,
+            final String option1, final String option2,
+            final String option3, final String option4, final String ans) {
+        this.questionId = id;
+        this.questionTitle = title;
+        this.optionOne = option1;
+        this.optionTwo = option2;
+        this.optionThree = option3;
+        this.optionFour = option4;
         this.answer = ans;
     }
 }

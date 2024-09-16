@@ -1,0 +1,78 @@
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .dashboard-header{
+    margin-top: 15px;
+    padding: 2%;
+    margin-left: 1.4%;
+    margin-right: 1.4%;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: linear-gradient(90deg, #8c52ff,#5ce1e6);
+    color: #fff; 
+  }  
+
+  .dashboard-header h1 {
+    margin: 0;
+    font-size: 1.5 rem;
+  }
+
+  .dashboard-content {
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .welcome-box,
+  .user-profile-box {
+    flex: 1;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .welcome-box {
+    background-color: #e6f7ff; 
+  }
+
+  .welcome-box h2{
+    font-size: 50px;
+  }
+  
+  .user-profile-box {
+    background-color: #f5f5f5; 
+  }
+
+  .users-img{
+    margin-top:60px;
+    height: 70px;
+  }
+
+  .growth-img{
+    height: 200px;
+  }
+
+  .custom-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none; 
+    border-radius: 4px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-size: 16px;
+  }
+  
+  .custom-button:hover {
+    cursor: pointer;
+    background-color: #0056b3; 
+  }

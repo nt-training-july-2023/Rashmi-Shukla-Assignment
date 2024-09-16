@@ -1,7 +1,14 @@
 package com.project.assesmentportal.dto;
 
+import org.springframework.validation.annotation.Validated;
+
+import com.project.assesmentportal.entities.Options;
+import com.project.assesmentportal.messages.ErrorConstants;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -9,7 +16,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@NoArgsConstructor
+@Validated
 public class QuestionDto {
     /**
      * The unique identifier of the question.
@@ -19,36 +26,45 @@ public class QuestionDto {
     /**
      * The title of the question.
      */
+    @NotBlank(message = ErrorConstants.QUESTION_TITLE_REQUIRED)
     private String questionTitle;
 
     /**
-     * The first option as answer.
+     * The options of answer.
      */
-    private String optionOne;
+    @NotNull(message = ErrorConstants.OPTIONS_REQUIRED)
+    @Valid
+    private Options options;
 
     /**
-     * The second option as answer.
+     * Getter for getting the options.
+     * @return Options object.
      */
-    private String optionTwo;
-
+    public final Options getOptions() {
+        return new Options(options.getOptionI(), options.getOptionII(),
+                options.getOptionIII(), options.getOptionIV());
+    }
     /**
-     * The third option as answer.
+     * Setter for setting the options.
+     * @param paramOptions The options of Question.
      */
-    private String optionThree;
-
-    /**
-     * The fourth option as answer.
-     */
-    private String optionFour;
+    public final void setOptions(final Options paramOptions) {
+        this.options = new Options(paramOptions.getOptionI(),
+                paramOptions.getOptionII(), paramOptions.getOptionIII(),
+                paramOptions.getOptionIV());
+    }
 
     /**
      * The correct answer.
      */
+    @NotBlank(message = ErrorConstants.ANSWER_REQUIRED)
     private String answer;
 
     /**
      * instance of quiz.
      */
+    @NotNull(message = ErrorConstants.QUIZ_REQUIRED)
+    @Valid
     private QuizDto quiz;
 
     /**
@@ -56,51 +72,46 @@ public class QuestionDto {
      * @return quiz belongs to.
      */
     public final QuizDto getQuiz() {
-        if (quiz != null) {
-            return new QuizDto(quiz.getQuizId(), quiz.getQuizTitle(),
-                    quiz.getQuizDescription(), quiz.getQuizTimer(),
-                    quiz.getCategory());
-        }
-        return null;
+        return new QuizDto(quiz.getQuizId(), quiz.getQuizTitle(),
+                quiz.getQuizDescription(), quiz.getQuizTimer(),
+                quiz.getCategory());
     }
 
     /**
      * setter for the quiz.
-     * @param qz which the quiz belongs to.
+     * @param quizDto which the quiz belongs to.
      */
-    public final void setQuiz(final QuizDto qz) {
-        if (qz != null) {
-            this.quiz = new QuizDto(qz.getQuizId(), qz.getQuizTitle(),
-                    qz.getQuizDescription(), qz.getQuizTimer(),
-                    qz.getCategory());
-        } else {
-            this.quiz = null;
-        }
+    public final void setQuiz(final QuizDto quizDto) {
+        this.quiz = new QuizDto(quizDto.getQuizId(), quizDto.getQuizTitle(),
+                quizDto.getQuizDescription(), quizDto.getQuizTimer(),
+                quizDto.getCategory());
+    }
+
+    /**
+     * default constructor for question.
+     */
+    public QuestionDto() {
+        this.options = new Options("", "", "", "");
     }
 
     /**
      * all args constructor.
-     * @param qId    id of question
-     * @param qTitle title of question
-     * @param opt1   option 1
-     * @param opt2   option2
-     * @param opt3   option 3
-     * @param opt4   option 4
+     * @param id    id of question
+     * @param title title of question
+     * @param option options
      * @param ans    answer
-     * @param qz     quizDto for question
+     * @param quizDto     quizDto for question
      */
-    public QuestionDto(final long qId, final String qTitle,
-            final String opt1, final String opt2, final String opt3,
-            final String opt4, final String ans, final QuizDto qz) {
-        this.questionId = qId;
-        this.questionTitle = qTitle;
-        this.optionOne = opt1;
-        this.optionTwo = opt2;
-        this.optionThree = opt3;
-        this.optionFour = opt4;
+    public QuestionDto(final long id, final String title,
+            final Options option, final String ans, final QuizDto quizDto) {
+        this.questionId = id;
+        this.questionTitle = title;
+        this.options = new Options(option.getOptionI(), option.getOptionII(),
+                option.getOptionIII(), option.getOptionIV());
         this.answer = ans;
-        this.quiz = new QuizDto(qz.getQuizId(), qz.getQuizTitle(),
-                qz.getQuizDescription(), qz.getQuizTimer(),
-                qz.getCategory());
+        this.quiz = new QuizDto(quizDto.getQuizId(), quizDto.getQuizTitle(),
+                quizDto.getQuizDescription(), quizDto.getQuizTimer(),
+                quizDto.getCategory());
+
     }
 }

@@ -2,24 +2,34 @@ package com.project.assesmentportal.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.assesmentportal.dto.ApiResponse;
 import com.project.assesmentportal.dto.QuestionDto;
+import com.project.assesmentportal.messages.MessageConstants;
 import com.project.assesmentportal.services.QuestionService;
+
+import jakarta.validation.Valid;
 
 /**
  * Controller class responsible for handling CRUD operations.
  */
 @CrossOrigin("*")
 @RestController
+@RequestMapping("/question")
 public class QuestionController {
 
     /**
@@ -29,16 +39,24 @@ public class QuestionController {
     private QuestionService questionService;
 
     /**
+     * The instance of Logger Class.
+     */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(QuestionController.class);
+
+    /**
      * handle add question.
      * @param questionDto of question to be added.
      * @return added quiz.
      */
-    @RequestMapping(value = "/question", method = RequestMethod.POST)
-    public final ResponseEntity<QuestionDto> addQuiz(
-            @RequestBody final QuestionDto questionDto) {
-        QuestionDto addQuestion = this.questionService
-                .addQuestion(questionDto);
-        return new ResponseEntity<QuestionDto>(addQuestion,
+    @PostMapping()
+    public final ResponseEntity<ApiResponse> addQuestion(
+            @RequestBody @Valid final QuestionDto questionDto) {
+        LOGGER.info(MessageConstants.ADD_QUESTION_INVOKED);
+        ApiResponse addQuestion =
+                this.questionService.addQuestion(questionDto);
+        LOGGER.info(MessageConstants.QUESTION_ADDED_SUCCESSFULLY);
+        return new ResponseEntity<ApiResponse>(addQuestion,
                 HttpStatus.CREATED);
     }
 
@@ -46,9 +64,12 @@ public class QuestionController {
      * gets list of all questions.
      * @return list of questions.
      */
-    @RequestMapping(value = "/question", method = RequestMethod.GET)
-    public final List<QuestionDto> getAllQuizzes() {
-        return questionService.getAllQuestions();
+    @GetMapping()
+    public final List<QuestionDto> getQuestions() {
+        LOGGER.info(MessageConstants.GET_QUESTIONS_INVOKED);
+        List<QuestionDto> questionDtos = questionService.getQuestions();
+        LOGGER.info(MessageConstants.QUESTIONS_RETRIEVED_SUCCESSFULLY);
+        return questionDtos;
     }
 
     /**
@@ -56,27 +77,32 @@ public class QuestionController {
      * @param questionId id of the question to be updated.
      * @return QuestionDto.
      */
-    @RequestMapping(value = "/question/{id}", method = RequestMethod.GET)
+    @GetMapping("/{id}")
     public final ResponseEntity<QuestionDto> getQuestionById(
             @PathVariable("id") final long questionId) {
-        return new ResponseEntity<QuestionDto>(
-                questionService.getQuestionById(questionId),
-                HttpStatus.OK);
+        LOGGER.info(MessageConstants.GET_QUESTION_INVOKED);
+        QuestionDto questionDto =
+                questionService.getQuestionById(questionId);
+        LOGGER.info(MessageConstants.QUESTIONS_RETRIEVED_SUCCESSFULLY
+                + questionId);
+        return new ResponseEntity<QuestionDto>(questionDto, HttpStatus.OK);
     }
 
     /**
      * updates question.
      * @param questionDto QuestionDto of new question.
-     * @param questionId id of the question
+     * @param questionId  id of the question
      * @return QuestionDto.
      */
-    @RequestMapping(value = "/question/{id}", method = RequestMethod.PUT)
-    public final ResponseEntity<QuestionDto> updateQuestion(
-            @RequestBody final QuestionDto questionDto,
+    @PutMapping("/{id}")
+    public final ResponseEntity<ApiResponse> updateQuestion(
+            @RequestBody @Valid final QuestionDto questionDto,
             @PathVariable("id") final long questionId) {
-        return new ResponseEntity<QuestionDto>(
-                questionService.updateQuestion(questionDto, questionId),
-                HttpStatus.OK);
+        LOGGER.info(MessageConstants.UPDATE_QUESTION_INVOKED);
+        ApiResponse response =
+                questionService.updateQuestion(questionDto, questionId);
+        LOGGER.info(MessageConstants.QUESTION_UPDATED_SUCCESSFULLY);
+        return new ResponseEntity<ApiResponse>(response, HttpStatus.OK);
     }
 
     /**
@@ -84,11 +110,12 @@ public class QuestionController {
      * @param questionId id of the question to be deleted.
      * @return string
      */
-    @RequestMapping(value = "/question/{id}", method = RequestMethod.DELETE)
-    public final ResponseEntity<String> deleteQuestion(
+    @DeleteMapping("/{id}")
+    public final ResponseEntity<ApiResponse> deleteQuestion(
             @PathVariable("id") final long questionId) {
-        questionService.deleteQuestion(questionId);
-        return new ResponseEntity<String>("Question deleted successfully",
-                HttpStatus.OK);
+        LOGGER.info(MessageConstants.DELETE_QUESTION_INVOKED);
+        ApiResponse response = questionService.deleteQuestion(questionId);
+        LOGGER.info(MessageConstants.QUESTION_DELETED_SUCCESSFULLY);
+        return new ResponseEntity<ApiResponse>(response, HttpStatus.OK);
     }
 }

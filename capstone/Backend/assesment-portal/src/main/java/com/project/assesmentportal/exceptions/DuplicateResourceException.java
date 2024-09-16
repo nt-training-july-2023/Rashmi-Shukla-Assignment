@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Exception indicating that a resource duplication conflict has occurred.
- * This exception is annotated with @ResponseStatus to indicate an HTTP 409
- * Conflict status.
  */
 @ResponseStatus(value = HttpStatus.CONFLICT)
 public class DuplicateResourceException extends RuntimeException {

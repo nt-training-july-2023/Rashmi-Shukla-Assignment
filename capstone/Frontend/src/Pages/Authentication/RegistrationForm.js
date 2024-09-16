@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
-import axios from 'axios'
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom'
 import './Form.css';
+import UserService from '../../Services/UserService';
 
 const RegistrationForm = () => {
 
@@ -14,6 +14,16 @@ const RegistrationForm = () => {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
     const navigate = useNavigate(); 
+    const userRole = localStorage.getItem("role");
+    const IsLoggedIn = localStorage.getItem("IsLoggedIn");
+
+    useEffect(() => {
+      if (IsLoggedIn === "true" && userRole === "admin") {
+        navigate("/dashboard");
+      } else if (IsLoggedIn === "true" && userRole === "user") {
+        navigate("/user-dashboard"); 
+      }
+    }, [IsLoggedIn,navigate,userRole]);
     
     const handleSubmit=async(e) =>{
       e.preventDefault()
@@ -23,7 +33,7 @@ const RegistrationForm = () => {
       }
       if(email === ""){
         validattionErrors.email = '*required'
-      }else if(!/^[a-zA-Z0-9]+@nucleusteq\.com$/.test(email)){
+      }else if(!/^[a-zA-Z0-9.]+@nucleusteq\.com$/.test(email)){
         validattionErrors.email = "*email should end with @nucleusteq.com"
       }
       if(phoneNumber === ''){
@@ -36,21 +46,18 @@ const RegistrationForm = () => {
       }
 
       if(Object.keys(validattionErrors).length === 0){
-        try{
-          const response = await axios.post('http://localhost:8080/users/register', { firstName, lastName, phoneNumber, email, password });
-          console.log(response.data);
-          Swal.fire({
-            title: "Success",
-            text: "User registered successfully",
-            icon: "success",
-            timer:2000,
-            showConfirmButton:false
-          });
-
-          if(response.status===200){
+        const user = { firstName, lastName, phoneNumber, email, password };
+          UserService.register(user).then((response) => {
+            Swal.fire({
+              title: "Success",
+              text: response.data.message,
+              icon: "success",
+              timer:2000,
+              showConfirmButton:false
+            });
             navigate("/")
-          }
-        }catch(error){
+          }).catch((error) => {
+            if(error.response){
             const submitError=error.response.data.message
             Swal.fire({
               title: "Error",
@@ -59,8 +66,15 @@ const RegistrationForm = () => {
               confirmButtonText: "Retry",
               confirmButtonColor:"red"
             });
-            console.error(error.response ? error.response.data: 'An error occurred');
-        } 
+          } else{
+            Swal.fire({
+              title:"Server not responding",
+              icon: "error",
+              confirmButtonText: "Retry Later",
+              confirmButtonColor: "red",
+            });
+          }
+          });
       }
       else{
         setErrors(validattionErrors)
@@ -72,6 +86,7 @@ const RegistrationForm = () => {
       }
 
   return (
+    <div className='form-body'>
     <div className="Auth-form-container">
     <form className="Auth-form" onSubmit={handleSubmit}>
       <div className="Auth-form-content">
@@ -89,8 +104,10 @@ const RegistrationForm = () => {
             type="text"
             className="form-input"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-        
+            onChange={(e) => {
+              setFirstName(e.target.value);
+              setErrors("");
+            }}
           />
           {errors.firstName && <span>{errors.firstName}</span>}
         </div>
@@ -101,19 +118,23 @@ const RegistrationForm = () => {
             type="text"
             className="form-input"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            
+            onChange={(e) =>{
+              setLastName(e.target.value);
+              setErrors("");
+            }}
           />
         </div>
 
         <div className="form-group">
           <label>Phone Number</label>
           <input
-            type="phone"
+            type="number"
             className="form-input"
             value={phoneNumber || ''}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            
+            onChange={(e) => {
+              setPhoneNumber(e.target.value);
+              setErrors("");
+            }}
           />
           {errors.phoneNumber && <span>{errors.phoneNumber}</span>}
         </div>
@@ -124,7 +145,10 @@ const RegistrationForm = () => {
             type="email"
             className="form-input"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>{
+              setEmail(e.target.value);
+              setErrors("");
+            }}
           />
           {errors.email && <span>{errors.email}</span>}
         </div>
@@ -135,7 +159,10 @@ const RegistrationForm = () => {
             type="password"
             className="form-input"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setErrors("");
+            }}
           />
           {errors.password && <span>{errors.password}</span>}
         </div>
@@ -147,6 +174,7 @@ const RegistrationForm = () => {
         
       </div>
     </form>
+  </div>
   </div>
   )
 }

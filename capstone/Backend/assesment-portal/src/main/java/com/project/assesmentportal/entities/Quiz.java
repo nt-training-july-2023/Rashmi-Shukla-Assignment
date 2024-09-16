@@ -49,6 +49,7 @@ public class Quiz {
     /**
      * The timer for quiz.
      */
+    @Column(nullable = false)
     private int quizTimer;
 
     /**
@@ -63,26 +64,19 @@ public class Quiz {
      * @return category the quiz belongs to.
      */
     public final Category getCategory() {
-        if (category != null) {
-            return new Category(category.getCategoryId(),
-                    category.getCategoryTitle(),
-                    category.getCategoryDescription());
-        }
-        return null;
-
+        return new Category(category.getCategoryId(),
+                category.getCategoryTitle(),
+                category.getCategoryDescription());
     }
 
     /**
      * setter for the category.
-     * @param cat which the quiz belongs to.
+     * @param categoryEntity which the quiz belongs to.
      */
-    public final void setCategory(final Category cat) {
-        if (cat != null) {
-            this.category = new Category(cat.getCategoryId(),
-                    cat.getCategoryTitle(), cat.getCategoryDescription());
-        } else {
-            this.category = null;
-        }
+    public final void setCategory(final Category categoryEntity) {
+        this.category = new Category(categoryEntity.getCategoryId(),
+                categoryEntity.getCategoryTitle(),
+                categoryEntity.getCategoryDescription());
     }
 
     /**
@@ -109,23 +103,21 @@ public class Quiz {
 
     /**
      * all args constructor for quiz.
-     * @param qId    unique id for quiz.
-     * @param qTitle title of the quiz.
-     * @param qDesc  description of the quiz.
-     * @param time   timer for the quiz.
-     * @param cat category.
+     * @param id             unique id for quiz.
+     * @param title          title of the quiz.
+     * @param description    description of the quiz.
+     * @param time           timer for the quiz.
+     * @param categoryEntity category.
      */
-    public Quiz(final long qId, final String qTitle, final String qDesc,
-            final int time, final Category cat) {
-        this.quizId = qId;
-        this.quizTitle = qTitle;
-        this.quizDescription = qDesc;
+    public Quiz(final long id, final String title,
+            final String description, final int time,
+            final Category categoryEntity) {
+        this.quizId = id;
+        this.quizTitle = title;
+        this.quizDescription = description;
         this.quizTimer = time;
-        if (cat != null) {
-            this.category = new Category(cat.getCategoryId(),
-                    cat.getCategoryTitle(), cat.getCategoryDescription());
-        } else {
-            this.category = null;
-        }
+        this.category = new Category(categoryEntity.getCategoryId(),
+                categoryEntity.getCategoryTitle(),
+                categoryEntity.getCategoryDescription());
     }
 }

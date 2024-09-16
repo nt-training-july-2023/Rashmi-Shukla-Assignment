@@ -1,93 +1,51 @@
- .quiz-header {
-  margin-top: 15px;
-  padding: 2%;
-  margin-left: 10.5%;
-  margin-right: 10.5%;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #7895CB; 
-  color: #fff; 
-}  
-
-.quiz-header h1 {
-  margin: 0;
-  font-size: 1.5 rem;
-}
-
-.quiz-header button {
-  background-color: #fff; 
-  color: #272829; 
-  border: none;
-  padding: 5px 10px; 
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem; 
-}
-
-.quiz-header button:hover {
-  background-color: #e0e0e0; 
-}
   .quiz-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
   
-  .card {
-    margin: 10px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    width: 300px; 
-    text-align: center;
-    font-family: Arial, sans-serif; 
-    background-color: #f9f9f9; 
+  .quiz-header {
+    margin-top: 15px;
+    padding: 2%;
+    margin-left: 10.5%;
+    margin-right: 10.5%;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: linear-gradient(90deg, #8c52ff,#5ce1e6);
+    color: #fff; 
+  } 
+
+  .quiz-header h1{
+    margin: 0;
+    font-size: 1.5 rem;
   }
-  
-  .card-title {
-    font-size: 1.5rem; 
-    margin-bottom: 10px;
-    text-transform: capitalize
-  }
-  
-  .card-text {
+
+  .quiz-header button {
+    background-color: #fff; 
+    color: #272829; 
+    border: none;
+    padding: 5px 10px; 
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 1rem; 
+  }
+  
+  .quiz-header button:hover {
+    cursor: pointer;
+    background-color: #e0e0e0; 
+  }  
+
+  #category-select{
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
     margin-bottom: 10px;
   }
   
-  .action-btn{
-    margin: auto;
-  }
-
-  .action-btn.update-btn{
-    display: block;
-    font-size: 12px;
-    margin-top: 20px;
-    text-align: center;
-    text-decoration: none;
-    background-color: #4A55A2;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    width: 50%;
-  }
-
-  .action-btn.delete-btn{
-    display: block;
-    font-size: 12px;
-    margin-top: 20px;
-    text-align: center;
-    text-decoration: none;
-    background-color: #252B48;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    width: 50%;
-  }
-  
-  .update-btn:hover,
-  .delete-btn:hover {
-    background-color: #0056b3; 
+  @media (max-width:600px){  
+    .quiz-header{
+      margin: 1.4%;
+    }
   }

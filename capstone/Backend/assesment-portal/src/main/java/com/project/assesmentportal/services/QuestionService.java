@@ -2,6 +2,7 @@ package com.project.assesmentportal.services;
 
 import java.util.List;
 
+import com.project.assesmentportal.dto.ApiResponse;
 import com.project.assesmentportal.dto.QuestionDto;
 
 /**
@@ -13,13 +14,13 @@ public interface QuestionService {
      * @param questionDto of the question to be added.
      * @return QuestionDto
      */
-    QuestionDto addQuestion(QuestionDto questionDto);
+    ApiResponse addQuestion(QuestionDto questionDto);
 
     /**
      * gets all questions.
      * @return all the questions.
      */
-    List<QuestionDto> getAllQuestions();
+    List<QuestionDto> getQuestions();
 
     /**
      * updates an existing question.
@@ -27,7 +28,7 @@ public interface QuestionService {
      * @param questionId  of the question to be updated.
      * @return updated question.
      */
-    QuestionDto updateQuestion(QuestionDto questionDto, long questionId);
+    ApiResponse updateQuestion(QuestionDto questionDto, long questionId);
 
     /**
      * get question by question-id.
@@ -39,6 +40,7 @@ public interface QuestionService {
     /**
      * delete question by Id.
      * @param questionId id of the question to be deleted.
+     * @return ApiResponse
      */
-    void deleteQuestion(long questionId);
+    ApiResponse deleteQuestion(long questionId);
 }

@@ -1,0 +1,102 @@
+.quiz-card {
+    margin: 10px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 300px; 
+    text-align: center;
+    font-family: Arial, sans-serif; 
+    background-color: #f9f9f9; 
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .quiz-card:hover{
+    transform: scale(1);
+    box-shadow: 0px 0px 20px rgba(145,142,142,0.7);
+  }
+
+  .quiz-card-title {
+    font-size: 1.5rem; 
+    margin-bottom: 10px;
+  }
+  
+  .quiz-card-text {
+    font-size: 1rem; 
+    margin-bottom: 10px;
+  }
+
+  
+  .action-buttons.update-btn{
+    display: block;
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #5160d4;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: wheat;
+    width: 50%;
+  }
+
+  .action-buttons.delete-btn{
+    display: block;
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    background-color: darkgray;
+    color: white;
+    padding: 10px 20px;
+    border: wheat;
+    border-radius: 5px;
+    width: 50%;
+  }
+
+  .action-buttons.start-btn{
+    display: block;
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #008026;
+    color: white;
+    padding: 10px 20px;
+    border: wheat;
+    border-radius: 5px;
+    width: 50%;
+  }
+
+  .action-buttons.view-btn{
+    display: block;
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: wheat;
+    width: 50%;
+  }
+
+  .view-btn:hover {
+    cursor: pointer;
+    background-color: #123C89; 
+  }
+  
+  .update-btn:hover{
+    cursor: pointer;
+    background-color: #4A55A2;
+  }
+  .delete-btn:hover {
+    cursor: pointer;
+    background-color: gray; 
+  }
+  .start-btn:hover {
+    cursor: pointer;
+    background-color: #026b22; 
+  }

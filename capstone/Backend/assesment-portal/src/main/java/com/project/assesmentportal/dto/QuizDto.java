@@ -1,5 +1,13 @@
 package com.project.assesmentportal.dto;
 
+import org.springframework.validation.annotation.Validated;
+
+import com.project.assesmentportal.messages.ErrorConstants;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Validated
 public class QuizDto {
     /**
      * The unique identifier of the quiz.
@@ -19,21 +28,26 @@ public class QuizDto {
     /**
      * The title of the quiz.
      */
+    @NotBlank(message = ErrorConstants.QUIZ_TITLE_REQUIRED)
     private String quizTitle;
 
     /**
      * The description of the quiz.
      */
+    @NotBlank(message = ErrorConstants.QUIZ_DESCRIPTION_REQUIRED)
     private String quizDescription;
 
     /**
      * timer for the quiz.
      */
+    @Min(value = 1, message = ErrorConstants.QUIZ_TIMER_MIN)
     private int quizTimer;
 
     /**
      * The category of the quiz.
      */
+    @NotNull(message = ErrorConstants.CATEGORY_REQUIRED)
+    @Valid
     private CategoryDto category;
 
     /**
@@ -41,49 +55,38 @@ public class QuizDto {
      * @return category.
      */
     public final CategoryDto getCategory() {
-        if (category != null) {
             return new CategoryDto(category.getCategoryId(),
                     category.getCategoryTitle(),
                     category.getCategoryDescription());
-        }
-        return null;
     }
 
     /**
      * set quiz category.
-     * @param cat to be set.
+     * @param categoryDto to be set.
      */
-    public final void setCategory(final CategoryDto cat) {
-        if (cat != null) {
-            this.category = new CategoryDto(cat.getCategoryId(),
-                    cat.getCategoryTitle(),
-                    cat.getCategoryDescription());
-        } else {
-            this.category = null;
-        }
+    public final void setCategory(final CategoryDto categoryDto) {
+            this.category = new CategoryDto(categoryDto.getCategoryId(),
+                    categoryDto.getCategoryTitle(),
+                    categoryDto.getCategoryDescription());
     }
 
     /**
      * all args constructor.
-     * @param qId id of the quiz.
-     * @param qTitle title of the quiz.
-     * @param qDescription description of the quiz.
-     * @param qTimer timer for the quiz.
-     * @param cat of the quiz.
+     * @param id id of the quiz.
+     * @param title title of the quiz.
+     * @param description description of the quiz.
+     * @param timer timer for the quiz.
+     * @param categoryDto of the quiz.
      */
-    public QuizDto(final long qId, final String qTitle,
-            final String qDescription, final int qTimer,
-            final CategoryDto cat) {
-        this.quizId = qId;
-        this.quizTitle = qTitle;
-        this.quizDescription = qDescription;
-        this.quizTimer = qTimer;
-        if (cat != null) {
-            this.category = new CategoryDto(cat.getCategoryId(),
-                cat.getCategoryTitle(),
-                cat.getCategoryDescription());
-        } else {
-            this.category = null;
-        }
+    public QuizDto(final long id, final String title,
+            final String description, final int timer,
+            final CategoryDto categoryDto) {
+        this.quizId = id;
+        this.quizTitle = title;
+        this.quizDescription = description;
+        this.quizTimer = timer;
+        this.category = new CategoryDto(categoryDto.getCategoryId(),
+            categoryDto.getCategoryTitle(),
+            categoryDto.getCategoryDescription());
     }
 }

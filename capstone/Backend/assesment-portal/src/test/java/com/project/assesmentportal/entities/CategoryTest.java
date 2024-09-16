@@ -21,9 +21,9 @@ class CategoryTest {
         assertEquals(0,category.getCategoryId());
         assertEquals(null, category.getCategoryTitle());
         assertEquals(null, category.getCategoryDescription());
-        
-        Quiz quiz1 = new Quiz(1L, "Quiz 1", "Description 1", 30,null);
-        Quiz quiz2 = new Quiz(2L, "Quiz 2", "Description 2", 45,null);
+        Category category = new Category(1,"IT","Corporate");
+        Quiz quiz1 = new Quiz(1L, "Quiz 1", "Description 1", 30,category);
+        Quiz quiz2 = new Quiz(2L, "Quiz 2", "Description 2", 45,category);
         List<Quiz> quizList = new ArrayList<>();
         quizList.add(quiz1);
         quizList.add(quiz2);

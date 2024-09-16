@@ -12,3 +12,22 @@
     padding-top: 150px;
 }
 
+.error-warning{
+    font-size: 100px;
+    color:rgb(255, 0, 0);
+}
+
+.error-button{ 
+    background-color: #007bff;
+    color: #fff;
+    border: none; /* Remove button border */
+    border-radius: 4px; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-size: 16px;
+    }
+    
+.error-button:hover {
+    cursor: pointer;
+    background-color: #0056b3; 
+}

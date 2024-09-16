@@ -15,13 +15,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 
+import com.project.assesmentportal.dto.ApiResponse;
 import com.project.assesmentportal.dto.CategoryDto;
 import com.project.assesmentportal.dto.QuizDto;
 import com.project.assesmentportal.entities.Category;
 import com.project.assesmentportal.entities.Quiz;
 import com.project.assesmentportal.exceptions.DuplicateResourceException;
 import com.project.assesmentportal.exceptions.ResourceNotFoundException;
+import com.project.assesmentportal.messages.MessageConstants;
 import com.project.assesmentportal.repositories.CategoryRepository;
 
 class CategoryServiceImplTest {
@@ -52,18 +55,19 @@ class CategoryServiceImplTest {
         category.setCategoryDescription(categoryDto.getCategoryDescription());
         
         when(modelMapper.map(categoryDto, Category.class)).thenReturn(category);
-        when(modelMapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
         when(categoryRepository.findByCategoryTitle(category.getCategoryTitle())).thenReturn(Optional.empty());
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
         
-        CategoryDto resultCategoryDto = categoryServiceImpl.addCategory(categoryDto);
-        assertNotNull(resultCategoryDto);
-        assertEquals(resultCategoryDto.getCategoryId(), category.getCategoryId());
-        assertEquals(resultCategoryDto.getCategoryTitle(), resultCategoryDto.getCategoryTitle());
-        assertEquals(resultCategoryDto.getCategoryDescription(), resultCategoryDto.getCategoryDescription());
+        ApiResponse expectedResponse = new ApiResponse(
+                MessageConstants.CATEGORY_ADDED_SUCCESSFULLY,
+                HttpStatus.CREATED.value()
+                );
         
+        ApiResponse result = categoryServiceImpl.addCategory(categoryDto);
+        assertNotNull(result);
+        assertEquals(result, expectedResponse);
     }
-    
+
     @Test
     void testAddCategory_DuplicateResourceException() {
         CategoryDto categoryDto = new CategoryDto();
@@ -77,7 +81,6 @@ class CategoryServiceImplTest {
         category.setCategoryDescription(categoryDto.getCategoryDescription());
         
         when(modelMapper.map(categoryDto, Category.class)).thenReturn(category);
-        when(modelMapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
         when(categoryRepository.findByCategoryTitle(category.getCategoryTitle())).thenReturn(Optional.of(category));
         
         assertThrows(DuplicateResourceException.class, () -> {
@@ -100,14 +103,10 @@ class CategoryServiceImplTest {
         
         when(modelMapper.map(category, CategoryDto.class)).thenReturn(categoryDto);
         when(categoryRepository.findById(category.getCategoryId())).thenReturn(Optional.of(category));
-        when(categoryRepository.save(any(Category.class))).thenReturn(category);
         
         CategoryDto resultCategoryDto = categoryServiceImpl.getCategoryById(1);
         assertNotNull(resultCategoryDto);
-        assertEquals(resultCategoryDto.getCategoryId(), category.getCategoryId());
-        assertEquals(resultCategoryDto.getCategoryTitle(), resultCategoryDto.getCategoryTitle());
-        assertEquals(resultCategoryDto.getCategoryDescription(), resultCategoryDto.getCategoryDescription());
-        
+        assertEquals(resultCategoryDto,categoryDto);
     }
     
     @Test
@@ -126,16 +125,28 @@ class CategoryServiceImplTest {
     }
     
     @Test
-    public void testGetAllCategories() {
+    public void testGetCategories() {
+        Category cat1 = new Category(1,"React","Mcq");
+        Category cat2 = new Category(2,"Java","Mcq");
         List<Category> catList = new ArrayList<>();
-        catList.add(new Category(1,"React","Mcq"));
-        catList.add(new Category(2,"Java","Mcq"));
-
+        catList.add(cat1);
+        catList.add(cat2);
+        
+        CategoryDto catDto1 = new CategoryDto(1,"React","Mcq");
+        CategoryDto catDto2 = new CategoryDto(2,"Java","Mcq");
+        List<CategoryDto> catDtos = new ArrayList<>();
+        catDtos.add(catDto1);
+        catDtos.add(catDto2);
+        
+        when(modelMapper.map(cat1, CategoryDto.class)).thenReturn(catDto1);
+        when(modelMapper.map(cat2, CategoryDto.class)).thenReturn(catDto2);
         when(categoryRepository.findAll()).thenReturn(catList);
-        List<CategoryDto> categoryDtos = categoryServiceImpl.getAllCategories();
+        
+        List<CategoryDto> response = categoryServiceImpl.getCategories();
+        System.out.println(response);
 
-        assertNotNull(categoryDtos);
-        assertEquals(2, categoryDtos.size()); // Assuming there are 2 users in the list
+        assertNotNull(response);
+        assertEquals(catDtos,response);
     }
     
     @Test
@@ -155,12 +166,14 @@ class CategoryServiceImplTest {
         when(categoryRepository.findByCategoryTitle(categoryDto.getCategoryTitle())).thenReturn(Optional.empty());
         when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
         
-        CategoryDto resultCategoryDto = categoryServiceImpl.updateCategory(categoryDto,categoryIdToUpdate);
-        assertNotNull(resultCategoryDto);
-        assertEquals(resultCategoryDto.getCategoryId(), categoryDto.getCategoryId());
-        assertEquals(resultCategoryDto.getCategoryTitle(), categoryDto.getCategoryTitle());
-        assertEquals(resultCategoryDto.getCategoryDescription(), categoryDto.getCategoryDescription());
+        ApiResponse expectedResponse = new ApiResponse(
+                MessageConstants.CATEGORY_UPDATED_SUCCESSFULLY,
+                HttpStatus.OK.value()
+                );
         
+        ApiResponse result = categoryServiceImpl.updateCategory(categoryDto,categoryIdToUpdate);
+        assertNotNull(result);
+        assertEquals(result, expectedResponse);
     }
     
     @Test
@@ -215,47 +228,77 @@ class CategoryServiceImplTest {
         Category categoryToDelete = new Category();
         categoryToDelete.setCategoryId(categoryIdToDelete);
 
-        // Mock the behavior of the repository
         when(categoryRepository.findById(categoryIdToDelete)).thenReturn(Optional.of(categoryToDelete));
 
-        // Act
-        categoryServiceImpl.deleteCategory(categoryIdToDelete);
+        ApiResponse expectedResponse = new ApiResponse(
+                MessageConstants.CATEGORY_DELETED_SUCCESSFULLY,
+                HttpStatus.OK.value()
+                );
 
-        // Assert
+        ApiResponse response = categoryServiceImpl.deleteCategory(categoryIdToDelete);
+
         verify(categoryRepository, times(1)).deleteById(categoryIdToDelete);
+        assertEquals(response, expectedResponse);
     }
     
     @Test
     public final void testDeleteCategory_NotFound() {
         long categoryIdToDelete = 1L;
 
-        // Mock the behavior of the repository to return an empty Optional
         when(categoryRepository.findById(categoryIdToDelete)).thenReturn(Optional.empty());
 
-        // Act and Assert
         assertThrows(ResourceNotFoundException.class, () -> {
             categoryServiceImpl.deleteCategory(categoryIdToDelete);
         });
     }
 
-//    @Test
-//    public final void testGetQuizzesByCategory_Success() {
-//        long catId = 1L;
-//        Category category = new Category();
-//        category.setCategoryId(catId);
-//        category.setCategoryId(category.getCategoryId());
-//        category.setCategoryTitle(category.getCategoryTitle());
-//        category.setCategoryDescription(category.getCategoryDescription());
-//        
-//        List<Quiz> quizList = new ArrayList<>();
-//        quizList.add(new Quiz(1, "React", "descr", 20, null));
-//        
-//        when(categoryRepository.findById(catId)).thenReturn(Optional.of(category));
-//        
-//        List<QuizDto> quizDtos = categoryServiceImpl.getQuizzesByCategory(catId);
-//        
-//        assertNotNull(quizDtos);
-//        assertEquals(1, quizDtos.size());
-//    }
+    @Test
+    public final void testGetQuizzesByCategory_Success() {
+        long catId = 1L;
+        Category category = new Category();
+        category.setCategoryId(catId);
+        category.setCategoryTitle("React");
+        category.setCategoryDescription("Mcqs");
+        Quiz quiz = new Quiz(1, "React", "descr", 20, category);
+        List<Quiz> quizList = new ArrayList<>();
+        quizList.add(quiz);
+        category.setQuizzes(quizList);
+        
+        CategoryDto categoryDto = new CategoryDto();
+        categoryDto.setCategoryId(category.getCategoryId());
+        categoryDto.setCategoryTitle(category.getCategoryTitle());
+        categoryDto.setCategoryDescription(category.getCategoryDescription());
+        QuizDto quizDto = new QuizDto(1, "React", "descr", 20, categoryDto);
+        List<QuizDto> quizDtosList = new ArrayList<>();
+        quizDtosList.add(quizDto);
+        
+        when(categoryRepository.findById(catId)).thenReturn(Optional.of(category));
+        when(modelMapper.map(quiz, QuizDto.class)).thenReturn(quizDto);
+        when(modelMapper.map(quiz.getCategory(), CategoryDto.class)).thenReturn(categoryDto);
+        
+        List<QuizDto> response = categoryServiceImpl.getQuizzesByCategory(catId);
+        
+        assertNotNull(response);
+        assertEquals(quizDtosList, response);
+    }
+    
+    @Test
+    public final void testGetQuizzesByCategory_CategoryNotFound() {
+        long catId = 1L;
+        Category category = new Category();
+        category.setCategoryId(catId);
+        category.setCategoryTitle("React");
+        category.setCategoryDescription("Mcqs");
+        Quiz quiz = new Quiz(1, "React", "descr", 20, category);
+        List<Quiz> quizList = new ArrayList<>();
+        quizList.add(quiz);
+        category.setQuizzes(quizList);
+        
+        when(categoryRepository.findById(catId)).thenReturn(Optional.empty());
+        
+        assertThrows(ResourceNotFoundException.class, () -> {
+            categoryServiceImpl.getQuizzesByCategory(catId);
+        });
+    }
 
 }

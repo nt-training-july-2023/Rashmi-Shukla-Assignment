@@ -1,20 +1,28 @@
 package com.project.assesmentportal.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.project.assesmentportal.dto.ApiResponse;
 import com.project.assesmentportal.dto.CategoryDto;
 import com.project.assesmentportal.dto.QuestionDto;
 import com.project.assesmentportal.dto.QuizDto;
 import com.project.assesmentportal.entities.Category;
+import com.project.assesmentportal.entities.Options;
 import com.project.assesmentportal.entities.Question;
 import com.project.assesmentportal.entities.Quiz;
 import com.project.assesmentportal.exceptions.ResourceNotFoundException;
+import com.project.assesmentportal.messages.ErrorConstants;
+import com.project.assesmentportal.messages.MessageConstants;
 import com.project.assesmentportal.repositories.QuestionRepository;
+import com.project.assesmentportal.repositories.QuizRepository;
 import com.project.assesmentportal.services.QuestionService;
 
 /**
@@ -25,10 +33,10 @@ import com.project.assesmentportal.services.QuestionService;
 public class QuestionServiceImpl implements QuestionService {
 
     /**
-     * instance of ModelMapper.
+     * instance of quizRepo.
      */
     @Autowired
-    private ModelMapper modelMapper;
+    private QuizRepository quizRepository;
 
     /**
      * instance of QuestionRepositoy.
@@ -37,17 +45,35 @@ public class QuestionServiceImpl implements QuestionService {
     private QuestionRepository questionRepository;
 
     /**
+     * Creating a instance of Logger Class.
+     */
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(QuestionServiceImpl.class);
+
+    /**
      * add new question.
      * @param questionDto QuestionDto of question.
      * @return returns QuestionDto of added question.
      */
     @Override
-    public final QuestionDto addQuestion(final QuestionDto questionDto) {
-        System.out.println(questionDto);
+    public final ApiResponse addQuestion(final QuestionDto questionDto) {
+        LOGGER.info(MessageConstants.ADD_QUESTION_INVOKED);
         Question question = this.dtoToEntity(questionDto);
-        System.out.println(question);
-        Question savedQuestion = questionRepository.save(question);
-        return this.entityToDto(savedQuestion);
+        Optional<Quiz> existingQuiz =
+                quizRepository.findById(question.getQuiz().getQuizId());
+        if (existingQuiz.isEmpty()) {
+            LOGGER.error(ErrorConstants.QUIZ_DOESNOT_EXISTS
+                    + question.getQuiz().getQuizId());
+            throw new ResourceNotFoundException(
+                    ErrorConstants.QUIZ_DOESNOT_EXISTS
+                            + question.getQuiz().getQuizId());
+        }
+        questionRepository.save(question);
+        LOGGER.info(MessageConstants.ADD_QUESTION_ENDED);
+        ApiResponse apiResponse = new ApiResponse(
+                MessageConstants.QUESTION_ADDED_SUCCESSFULLY,
+                HttpStatus.CREATED.value());
+        return apiResponse;
     }
 
     /**
@@ -55,28 +81,45 @@ public class QuestionServiceImpl implements QuestionService {
      * @return list of questions
      */
     @Override
-    public final List<QuestionDto> getAllQuestions() {
+    public final List<QuestionDto> getQuestions() {
+        LOGGER.info(MessageConstants.GET_QUESTIONS_INVOKED);
         List<Question> questions = questionRepository.findAll();
         List<QuestionDto> questionDtos = questions.stream()
                 .map(this::entityToDto).collect(Collectors.toList());
+        LOGGER.info(MessageConstants.GET_QUESTIONS_ENDED);
         return questionDtos;
     }
 
     /**
      * updates existing question.
-     * @param  questionDto QuestionDto of quiz
-     * @param questionId Question id of existing quiz.
+     * @param questionDto QuestionDto of quiz
+     * @param questionId  Question id of existing quiz.
      * @return updated quiz.
      */
     @Override
-    public final QuestionDto updateQuestion(final QuestionDto questionDto,
+    public final ApiResponse updateQuestion(final QuestionDto questionDto,
             final long questionId) {
-        Question exisitingQuestion = questionRepository
-                .findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Question doesnot exists"));
+        LOGGER.info(MessageConstants.UPDATE_QUESTION_INVOKED);
+        Question exisitingQuestion =
+                questionRepository.findById(questionId).orElseGet(() -> {
+                    LOGGER.error(ErrorConstants.QUESTION_DOESNOT_EXISTS
+                            + questionId);
+                    throw new ResourceNotFoundException(
+                            ErrorConstants.QUESTION_DOESNOT_EXISTS
+                                    + questionId);
+                });
 
         Question question = dtoToEntity(questionDto);
+
+        Optional<Quiz> existingQuiz =
+                quizRepository.findById(question.getQuiz().getQuizId());
+        if (existingQuiz.isEmpty()) {
+            LOGGER.error(ErrorConstants.QUIZ_DOESNOT_EXISTS
+                    + question.getQuiz().getQuizId());
+            throw new ResourceNotFoundException(
+                    ErrorConstants.QUIZ_DOESNOT_EXISTS
+                            + question.getQuiz().getQuizId());
+        }
 
         exisitingQuestion.setQuestionTitle(question.getQuestionTitle());
         exisitingQuestion.setOptionOne(question.getOptionOne());
@@ -86,19 +129,30 @@ public class QuestionServiceImpl implements QuestionService {
         exisitingQuestion.setAnswer(question.getAnswer());
         exisitingQuestion.setQuiz(question.getQuiz());
 
-        Question updatedQuestion = questionRepository
-                .save(exisitingQuestion);
-        return this.entityToDto(updatedQuestion);
+        questionRepository.save(exisitingQuestion);
+        LOGGER.info(MessageConstants.UPDATE_QUESTION_ENDED);
+        ApiResponse apiResponse = new ApiResponse(
+                MessageConstants.QUESTION_UPDATED_SUCCESSFULLY,
+                HttpStatus.OK.value());
+        return apiResponse;
     }
 
     /**
      * get question by its id.
-     * @param questionId id of the question
-     * return question dto.
+     * @param questionId id of the question return question dto.
      */
     @Override
     public final QuestionDto getQuestionById(final long questionId) {
-        Question question = questionRepository.findById(questionId).get();
+        LOGGER.info(MessageConstants.GET_QUESTION_INVOKED);
+        Question question =
+                questionRepository.findById(questionId).orElseGet(() -> {
+                    LOGGER.error(ErrorConstants.QUESTION_DOESNOT_EXISTS
+                            + questionId);
+                    throw new ResourceNotFoundException(
+                            ErrorConstants.QUESTION_DOESNOT_EXISTS
+                                    + questionId);
+                });
+        LOGGER.info(MessageConstants.GET_QUESTION_ENDED);
         return this.entityToDto(question);
     }
 
@@ -107,8 +161,20 @@ public class QuestionServiceImpl implements QuestionService {
      * @param questionId id of the question to delete.
      */
     @Override
-    public final void deleteQuestion(final long questionId) {
+    public final ApiResponse deleteQuestion(final long questionId) {
+        LOGGER.info(MessageConstants.DELETE_QUESTION_INVOKED);
+        questionRepository.findById(questionId).orElseGet(() -> {
+            LOGGER.error(
+                    "Delete Question: question not found" + questionId);
+            throw new ResourceNotFoundException(
+                    ErrorConstants.QUESTION_DOESNOT_EXISTS);
+        });
         questionRepository.deleteById(questionId);
+        LOGGER.info(MessageConstants.DELETE_QUESTION_ENDED);
+        ApiResponse apiResponse = new ApiResponse(
+                MessageConstants.QUESTION_DELETED_SUCCESSFULLY,
+                HttpStatus.OK.value());
+        return apiResponse;
     }
 
     /**
@@ -117,17 +183,45 @@ public class QuestionServiceImpl implements QuestionService {
      * @return converted question.
      */
     public final Question dtoToEntity(final QuestionDto questionDto) {
-        Question question = modelMapper.map(questionDto, Question.class);
-        if (questionDto.getQuiz() != null) {
-            Quiz quiz = modelMapper.map(questionDto.getQuiz(), Quiz.class);
-            if (questionDto.getQuiz().getCategory() != null) {
-                Category category = modelMapper.map(
-                        questionDto.getQuiz().getCategory(),
-                        Category.class);
-                quiz.setCategory(category);
-            }
-            question.setQuiz(quiz);
+        Question question = new Question();
+        question.setQuestionId(questionDto.getQuestionId());
+        question.setQuestionTitle(questionDto.getQuestionTitle());
+        question.setOptionOne(questionDto.getOptions().getOptionI());
+        question.setOptionTwo(questionDto.getOptions().getOptionII());
+        question.setOptionThree(questionDto.getOptions().getOptionIII());
+        question.setOptionFour(questionDto.getOptions().getOptionIV());
+        // check if answer belongs to options
+        boolean found = false;
+        String correctAnswerMatch = questionDto.getAnswer();
+        if (correctAnswerMatch
+                .equals(questionDto.getOptions().getOptionI())
+                || correctAnswerMatch
+                        .equals(questionDto.getOptions().getOptionII())
+                || correctAnswerMatch
+                        .equals(questionDto.getOptions().getOptionIII())
+                || correctAnswerMatch
+                        .equals(questionDto.getOptions().getOptionIV())) {
+            found = true;
         }
+        if (!found) {
+            throw new ResourceNotFoundException(
+                    ErrorConstants.ANSWER_NOT_IN_OPTIONS);
+        }
+        question.setAnswer(correctAnswerMatch);
+
+        Quiz quiz = new Quiz();
+        quiz.setQuizId(questionDto.getQuiz().getQuizId());
+        quiz.setQuizTitle(questionDto.getQuiz().getQuizTitle());
+        quiz.setQuizDescription(
+                questionDto.getQuiz().getQuizDescription());
+        quiz.setQuizTimer(questionDto.getQuiz().getQuizTimer());
+        Category category = new Category(
+                questionDto.getQuiz().getCategory().getCategoryId(),
+                questionDto.getQuiz().getCategory().getCategoryTitle(),
+                questionDto.getQuiz().getCategory()
+                        .getCategoryDescription());
+        quiz.setCategory(category);
+        question.setQuiz(quiz);
         return question;
     }
 
@@ -138,19 +232,26 @@ public class QuestionServiceImpl implements QuestionService {
      */
     public final QuestionDto entityToDto(final Question question) {
         // Map the QuizDto to a Quiz entity
-        QuestionDto questionDto = modelMapper.map(question,
-                QuestionDto.class);
-        if (question.getQuiz() != null) {
-            QuizDto quizDto = modelMapper.map(question.getQuiz(),
-                    QuizDto.class);
-            if (question.getQuiz().getCategory() != null) {
-                CategoryDto categoryDto = modelMapper.map(
-                        question.getQuiz().getCategory(),
-                        CategoryDto.class);
-                quizDto.setCategory(categoryDto);
-            }
-            questionDto.setQuiz(quizDto);
-        }
+        QuestionDto questionDto = new QuestionDto();
+        questionDto.setQuestionId(question.getQuestionId());
+        questionDto.setQuestionTitle(question.getQuestionTitle());
+        questionDto.setAnswer(question.getAnswer());
+        Options options = new Options(question.getOptionOne(),
+                question.getOptionTwo(), question.getOptionThree(),
+                question.getOptionFour());
+        questionDto.setOptions(options);
+        QuizDto quizDto = new QuizDto();
+        quizDto.setQuizId(question.getQuiz().getQuizId());
+        quizDto.setQuizTitle(question.getQuiz().getQuizTitle());
+        quizDto.setQuizDescription(
+                question.getQuiz().getQuizDescription());
+        quizDto.setQuizTimer(question.getQuiz().getQuizTimer());
+        CategoryDto categoryDto = new CategoryDto(
+                question.getQuiz().getCategory().getCategoryId(),
+                question.getQuiz().getCategory().getCategoryTitle(),
+                question.getQuiz().getCategory().getCategoryDescription());
+        quizDto.setCategory(categoryDto);
+        questionDto.setQuiz(quizDto);
         return questionDto;
     }
 

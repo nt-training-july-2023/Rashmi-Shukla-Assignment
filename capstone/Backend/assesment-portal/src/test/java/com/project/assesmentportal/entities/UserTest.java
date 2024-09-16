@@ -18,7 +18,7 @@ class UserTest {
         assertEquals(null, user.getLastName());
         assertEquals(null, user.getPassword());
         assertEquals(null, user.getEmail());
-        assertEquals(0, user.getPhoneNumber());
+        assertEquals(null, user.getPhoneNumber());
         assertEquals("user", user.getRole());
         
         user.setUserId(12);
@@ -26,7 +26,7 @@ class UserTest {
         user.setLastName("Shukla");
         user.setPassword("1234");
         user.setEmail("rs@gmail.com");
-        user.setPhoneNumber(1234567890);
+        user.setPhoneNumber("9234567890");
         user.setRole("admin");
         
         
@@ -35,7 +35,7 @@ class UserTest {
         assertEquals("Shukla", user.getLastName());
         assertEquals("1234", user.getPassword());
         assertEquals("rs@gmail.com", user.getEmail());
-        assertEquals(1234567890, user.getPhoneNumber());
+        assertEquals("9234567890", user.getPhoneNumber());
         assertEquals("admin", user.getRole());
         
     }
@@ -48,18 +48,18 @@ class UserTest {
         assertEquals(null, user.getLastName());
         assertEquals(null, user.getPassword());
         assertEquals(null, user.getEmail());
-        assertEquals(0, user.getPhoneNumber());
+        assertEquals(null, user.getPhoneNumber());
     }
     
     @Test
     void testParameterizedConstructor() {
-        User user = new User(12,"Rashmi","Shukla","1234","rs@gmail.com",1234567890,"user");
+        User user = new User(12,"Rashmi","Shukla","1234","rs@gmail.com","9234567890","user");
         assertEquals(12, user.getUserId());
         assertEquals("Rashmi", user.getFirstName());
         assertEquals("Shukla", user.getLastName());
         assertEquals("1234", user.getPassword());
         assertEquals("rs@gmail.com", user.getEmail());
-        assertEquals(1234567890, user.getPhoneNumber());
+        assertEquals("9234567890", user.getPhoneNumber());
         assertEquals("user", user.getRole());
         
     }

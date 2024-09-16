@@ -57,11 +57,12 @@ public class User {
     /**
      * The phone number of the user.
      */
-    @Column(name = "phone_number")
-    private long phoneNumber;
+    @Column(name = "phone_number", nullable = false)
+    private String phoneNumber;
 
     /**
      * The role of the user. Default value is "user".
      */
+    @Column(nullable = false)
     private String role = "user";
 }

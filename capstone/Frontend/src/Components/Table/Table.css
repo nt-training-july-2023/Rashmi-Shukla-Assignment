@@ -1,0 +1,109 @@
+tbody tr.active-row{
+  font-weight: bold;
+  color: #009879;
+}
+
+th,
+td {
+  padding: 12px 15px;
+}
+
+thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+tbody tr:nth-of-type(even) {
+background-color: #F1F0E8;
+}
+
+tbody tr:nth-of-type(odd) {
+background-color: white;
+}
+
+tbody tr:last-of-type{
+border-bottom: 2px solid #96B6C5;
+}
+
+tr {
+border-bottom: 1px solid #96B6C5 ;
+}
+
+th{
+  text-align: center;
+  background-color: #4e5052;
+  background-size: cover;
+  font-weight: bold;
+}
+
+.action-buttons.update-button{
+  display: block;
+  font-size: 12px;
+  margin-top: 20px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #5160d4;
+  color: white;
+  border: wheat;
+  padding: 10px 20px;
+  border-radius: 5px;
+  width: 100px;
+}
+
+.action-buttons.delete-button{
+  display: block;
+  font-size: 12px;
+  margin-top: 20px;
+  text-align: center;
+  text-decoration: none;
+  background-color: darkgray;
+  border: wheat;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  width: 100px;
+}
+
+.action-buttons.view-button{
+  display: block;
+  font-size: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: wheat;
+  width: 100px;
+}
+
+.update-button:hover{
+  cursor: pointer;
+  background-color: #4A55A2;
+}
+.delete-button:hover {
+  cursor: pointer;
+  background-color: gray; 
+}
+.view-button:hover {
+  cursor: pointer;
+  background-color: #123C89; 
+}
+
+@media (max-width:600px){  
+  .action-buttons.delete-button{
+    width: 100%;
+    padding: 10px 0px;
+  }
+  .action-buttons.update-button{
+    width: 100%;
+    padding: 10px 0px;
+  }
+  .action-buttons.view-button{
+    width: 100%;
+    padding: 10px 0px;
+  }
+}

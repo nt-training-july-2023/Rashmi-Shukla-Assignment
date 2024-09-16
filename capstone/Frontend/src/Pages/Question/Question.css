@@ -1,0 +1,113 @@
+.question-container{
+    width:100%;
+}
+.question-bg{
+    background-color:darkgray;
+    margin: 20px;
+    text-align: center;
+}
+
+.question-header {
+  margin-top: 15px;
+  padding: 2%;
+  margin-left: 4%;
+  margin-right: 4%;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-image: linear-gradient(90deg, #8c52ff,#5ce1e6);
+  color: #fff; 
+} 
+
+.question-header h1 {
+  margin: 0;
+  font-size: 1.5 rem;
+}
+
+.question-header button {
+  background-color: #fff; 
+  color: #272829; 
+  border: none;
+  padding: 5px 10px; 
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem; 
+}
+
+.question-header button:hover {
+  cursor: pointer;
+  background-color: #e0e0e0; 
+}  
+
+.question-card {
+    background-color:white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width:90%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.question-card-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.question-card-text {
+    font-size: 16px;
+    margin: 5px 0;
+}
+.question-form{
+    text-align: left;
+    padding: 20px;
+}
+
+.question-btns{
+    display: flex;
+    margin: 20px;
+}
+
+.ques-update-btn{
+  display: block;
+  font-size: 12px;
+  text-align: center;
+  text-decoration: none;
+  background-color: #5160d4;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: wheat;
+  width: 100px;
+  margin-right:5px;
+}
+
+.ques-delete-btn{
+  display: block;
+  font-size: 12px;
+  
+  text-align: center;
+  text-decoration: none;
+  background-color: darkgray;
+  color: white;
+  padding: 10px 20px;
+  border: wheat;
+  border-radius: 5px;
+  width: 100px;
+}
+
+.ques-update-btn:hover{
+  cursor: pointer;
+  background-color: #4A55A2;
+}
+.ques-delete-btn:hover {
+  cursor: pointer;
+  background-color: gray; 
+}
+
+
+
+

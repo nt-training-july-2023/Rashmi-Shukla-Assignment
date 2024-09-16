@@ -1,28 +1,32 @@
 import axios from 'axios';
 
-const CATEGORY_BASE_URL = 'http://localhost:8080/quiz';
+const QUIZ_BASE_URL = 'http://localhost:8080/quiz';
 
-class CategoryService{
+class QuizService{
 
     addQuiz(Quiz){
-        return axios.post(CATEGORY_BASE_URL, Quiz);
+        return axios.post(QUIZ_BASE_URL, Quiz);
     }
 
-    getAllQuizzes(){
-        return axios.get(CATEGORY_BASE_URL);
+    getQuizzes(){
+        return axios.get(QUIZ_BASE_URL);
     }
 
     getQuizById(id){
-        return axios.get(CATEGORY_BASE_URL+'/'+id);
+        return axios.get(QUIZ_BASE_URL+'/'+id);
     }
 
     updateQuiz(id, Quiz){
-        return axios.put(CATEGORY_BASE_URL+'/'+id,Quiz);
+        return axios.put(QUIZ_BASE_URL+'/'+id,Quiz);
     }
 
     deleteQuiz(id){
-        return axios.delete(CATEGORY_BASE_URL+'/'+id);
+        return axios.delete(QUIZ_BASE_URL+'/'+id);
     } 
+
+    getQuestionsByQuiz(id){
+        return axios.get(QUIZ_BASE_URL+'/'+id+'/'+"questions");
+    }
 }
 
-export default new CategoryService();
+export default new QuizService();
